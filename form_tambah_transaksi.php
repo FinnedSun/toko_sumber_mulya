@@ -4,7 +4,6 @@
 
 <head>
   <title>Tambah Transaksi</title>
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -14,13 +13,11 @@
     <div class="card shadow">
       <div class="card-body">
         <form action="proses_tambah_transaksi.php" method="POST">
-          <!-- Input Tanggal Transaksi -->
           <div class="mb-3">
             <label for="tgl_transaksi" class="form-label">Tanggal Transaksi</label>
             <input type="datetime-local" class="form-control" id="tgl_transaksi" name="tgl_transaksi" required>
           </div>
 
-          <!-- Pilih Barang -->
           <div class="mb-3">
             <label for="kode_barang" class="form-label">Pilih Barang</label>
             <select class="form-select" id="kode_barang" name="kode_barang" required onchange="updateBarangDetails()">
@@ -35,44 +32,37 @@
             </select>
           </div>
 
-          <!-- Nama Barang (Otomatis Terisi) -->
           <div class="mb-3">
             <label for="nama_barang" class="form-label">Nama Barang</label>
             <input type="text" class="form-control" id="nama_barang" name="nama_barang" readonly>
           </div>
 
-          <!-- Harga Barang (Otomatis Terisi) -->
           <div class="mb-3">
             <label for="harga_barang" class="form-label">Harga Barang</label>
             <input type="number" class="form-control" id="harga_barang" name="harga_barang" readonly>
           </div>
 
-          <!-- Stok Barang (Otomatis Terisi) -->
           <div class="mb-3">
             <label for="stok_barang" class="form-label">Stok Barang</label>
             <input type="number" class="form-control" id="stok_barang" name="stok_barang" readonly>
           </div>
 
-          <!-- Input Jumlah Beli -->
           <div class="mb-3">
             <label for="jumlah_beli" class="form-label">Jumlah Beli</label>
             <input type="number" class="form-control" id="jumlah_beli" name="jumlah_beli" required
               oninput="hitungTotalBayar()">
           </div>
 
-          <!-- Input Diskon -->
           <div class="mb-3">
             <label for="diskon" class="form-label">Diskon</label>
             <input type="number" class="form-control" id="diskon" name="diskon" value="0" oninput="hitungTotalBayar()">
           </div>
 
-          <!-- Total Bayar (Otomatis Terisi) -->
           <div class="mb-3">
             <label for="total_bayar" class="form-label">Total Bayar</label>
             <input type="number" class="form-control" id="total_bayar" name="total_bayar" readonly>
           </div>
 
-          <!-- Tombol Kembali dan Simpan -->
           <div class="d-flex justify-content-between">
             <a href="transaksi.php" class="btn btn-secondary">Kembali</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -82,7 +72,6 @@
     </div>
   </div>
 
-  <!-- JavaScript untuk Update Detail Barang dan Hitung Total Bayar -->
   <script>
     function updateBarangDetails() {
       const kodeBarang = document.getElementById('kode_barang');
@@ -91,15 +80,28 @@
       document.getElementById('nama_barang').value = selectedOption.getAttribute('data-nama');
       document.getElementById('harga_barang').value = selectedOption.getAttribute('data-harga');
       document.getElementById('stok_barang').value = selectedOption.getAttribute('data-stok');
-      hitungTotalBayar(); // Hitung ulang total bayar saat barang berubah
+      hitungTotalBayar();
     }
 
     function hitungTotalBayar() {
+      const kodeBarang = document.getElementById('kode_barang');
       const harga = parseFloat(document.getElementById('harga_barang').value) || 0;
       const jumlahBeli = parseFloat(document.getElementById('jumlah_beli').value) || 0;
-      const diskon = parseFloat(document.getElementById('diskon').value) || 0;
+      let diskon = 0;
+
+      if (kodeBarang === "BRG001") {
+        diskon = ((10 * harga) / 100) * jumlahBeli
+      } else if (kodeBarang === "BRG002") {
+        diskon = ((15 * harga) / 100) * jumlahBeli
+      } else if (kodeBarang === "BRG003") {
+        diskon = ((20 * harga) / 100) * jumlahBeli
+      } else {
+        diskon = ((5 * harga) / 100) * jumlahBeli
+      }
+
 
       const totalBayar = (harga * jumlahBeli) - diskon;
+      document.getElementById('diskon').value = diskon;
       document.getElementById('total_bayar').value = totalBayar;
     }
   </script>
